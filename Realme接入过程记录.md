@@ -154,3 +154,85 @@ sp的metadata文件上传地址：[https://mts.realme.govt.nz/logon-mts/metadata
 
 
 ## 3.创建AuthnRequest请求
+
+### 3.1 AuthnRequest的例子
+我们可以在RealMe Messaging Specification Login V1.0.pdf中的3.6 Sample Request中找到AuthnRequest的例子：
+	
+	<samlp:AuthnRequest
+	    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+	    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+		AssertionConsumerServiceIndex="0"
+		Destination="https://realme.govt.nz/sso/SSORedirect/metaAlias/logon-idp"
+		ID="a958a20e059c26d1cfb73163b1a6c4f9"
+		IssueInstant="2012-05-21T00:39:32Z"
+		ProviderName="Sample Service Provider"
+		Version="2.0">
+		    <saml:Issuer>https://www.sample-client.co.nz/onlineservices/service1</saml:Issuer>
+		    <samlp:NameIDPolicy AllowCreate="true" Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"></samlp:NameIDPolicy>
+		    <samlp:RequestedAuthnContext>
+		        <saml:AuthnContextClassRef>
+				urn:nzl:govt:ict:stds:authn:deployment:GLS:SAML:2.0:ac:classes:ModStrength
+				</saml:AuthnContextClassRef>
+		    </samlp:RequestedAuthnContext>
+	</samlp:AuthnRequest>
+
+
+### 3.2 对AuthnRequest的xml数据进行处理
+
+根据saml-bindings-2.0-os.pdf中3.4.4 Message Encoding的描述，我们需要对AuthnRequest按照以下顺序进行操作:
+
+- DEFLATE compression
+- base64-encoded
+- URL-encoded
+
+具体可以使用Realme-Go-SDK([https://github.com/cloes/Realme-GO-SDK](https://github.com/cloes/Realme-GO-SDK))
+
+**注意：**
+
+
+- 在这里ID的规则必须以字母"a"开头，例如上面例子中的ID="a958a20e059c26d1cfb73163b1a6c4f9"
+
+- issueInstant为AuthnRequest的生成时间，有效时间只有60s，如果超时的话，就需要重新生成issueInstant时间
+
+- issueInstant使用的是UTC时间，格式是2012-05-21T00:39:32Z
+
+### 3.3 向Realme的测试平台提交AuthnRequest
+
+#### 3.3.1 向MTS平台提交测试请求
+
+我们可以向Realme的测试地址提交POST请求，对我们的AuthnRequest进行测试。
+
+测试地址：https://mts.realme.govt.nz/logon-mts/mtsEntryPoint
+
+例如，我们经过上述的数据处理后，我们得到的url地址是：
+
+	https://mts.realme.govt.nz/logon-mts/mtsEntryPoint?SAMLRequest=fZJbbxoxEIWfm19h%2BR32QkLCiF0JQVshJRUKVR7y5ngHWMlrbz2zFPLra3ORNlLFq%2BccnW%2FGZ0qqMS3MOt7ZV%2FzTIbE4NMYSxEEhO2%2FBKaoJrGqQgDWsZy%2FPkA9TUETouXZW9iztbU%2FrHTvtjBSzq3vuLHUN%2BjX6fa1xaSs8FDKVYhFgaquippA75pYgSRqmoUdlGhxu3Z6H9jMxbuvsIAzi8Ltlf1y52rIUy0Uh1eThSeUppg8TnY%2BrTG8%2BHkfZePSRqbG%2B30yCiqgLqcTKciHzNHsapPkgG%2F9OR5A%2Fwn32LsXKu31dof8VFjqzRJTjBYQDaMzOE2qleENPJ%2BSwryzvhJjGu8Apxpe3vNOkr7w6W4ipy8XKmVofxcwY93ce3BxI2HcoxQ%2FnG8W3Dx9f6mqwOUmhjYzEGK5UnlO%2FpvTCL63A6tSR8FmMBy7vvp236j%2FOTWjEK27KyGE%2FDcQPglozEFcEKkqhwta4YxOS4efzulcmDTr6A%2FaLq9bs0W55d7nIf1MiYnKT8Trut7v8Bw%3D%3D&SigAlg=http%3A%2F%2Fwww.w3.org%2F2000%2F09%2Fxmldsig%23rsa-sha1&Signature=0U0j1l0a5rwCMWxN8fcU%2BJsLjAJLiTTZgBVWRdz3GkJ%2BojkeGWFVcyGgUepRWYyC%2FlemTluAKpHOAXr1INg2luskaZ%2BWSpQRKUC6t68zEzuZSkhkxnp1YiOWMNlqMCfAT0OdxlADqvwGd2qzCeBN5FxJ0cdqpNdy7g%2BP%2B6PukB8wOTGWqp0AfAaAK506ZDiuvZofg8rotIxYYmuloA44mOiQw5D5aV04FkThZSPBsZ9XvEXeB4aKHFpaTRsguxxsUNc8tttuW5aUJsNwunU%2Fk2ybxYYiA80CSqZR5qTFc7DP%2Fz90DtvzADXoyrMTpKGJp6pWWobNRly9g17IJxtqoA%3D%3D
+
+在有效时间内，访问上述地址，测试系统会显示如下页面：
+
+<img src="pic5.png" alt="pic5.png" width="800px" />
+
+#### 3.3.2 向MTS的在线校验平台验证AuthnRequest的格式正确性（可选步骤）
+
+我们可以先在线验证我们的AuthnRequest请求格式，确定了格式的正确性后，我们再向正式的MTS平台发起请求。
+
+在线校验地址：https://mts.realme.govt.nz/logon-mts/authnrequestsubmit
+
+如果验证不通过的话，它会显示相关的错误信息，如图：
+
+<img src="pic4.png" alt="pic4.png" width="800px" />
+
+如果验证通过，我们会得到一下的页面：
+
+<img src="pic5.png" alt="pic5.png" width="800px" />
+
+
+# 4.对Response响应进行解密
+
+
+
+
+
+
+
+
