@@ -222,17 +222,230 @@ sp的metadata文件上传地址：[https://mts.realme.govt.nz/logon-mts/metadata
 
 <img src="pic4.png" alt="pic4.png" width="800px" />
 
-如果验证通过，我们会得到一下的页面：
+如果验证通过，我们会得到以下的页面：
 
 <img src="pic5.png" alt="pic5.png" width="800px" />
 
-
-# 4.对Response响应进行解密
-
+我们可以在User fit输入框中输入我们自定义的内容，本例中我们输入"CLoesTest"
 
 
+## 4.对Response响应进行解密
+
+### 4.1 进行base64逆向编码
+Realme返回的Response是经过base64的，我们需要对它进行base64的逆向编码。逆向编码后的结果如下：
+
+	<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" ID="s25cb319258fe2feb9b98c29d2bb3819de8d9950cc" InResponseTo="a958a20e059c26d1cfb73163b1a6c4f9" Version="2.0" IssueInstant="2018-01-23T11:19:44Z" Destination="http://52.198.228.221/post.php"><saml:Issuer xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion">https://mts.realme.govt.nz/saml2</saml:Issuer><samlp:Status xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol">
+	<samlp:StatusCode  xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+	Value="urn:oasis:names:tc:SAML:2.0:status:Success">
+	</samlp:StatusCode>
+	</samlp:Status><saml:EncryptedAssertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"><xenc:EncryptedData xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Type="http://www.w3.org/2001/04/xmlenc#Element"><xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/><ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><xenc:EncryptedKey><xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#rsa-1_5"/><xenc:CipherData><xenc:CipherValue>lPptVGLFfJk/BiJsS1/XPwtJGwuGc8M4c1Qq1RkBYbS4cwIIS1AljVC88qaSCKTqh7PFBF+LSyeW
+	tiXPhx8N01T9s1OYfxszXSSWB/u0P8KB4Vh9mpux+ZRxvlDm46Nn7FZ6lnR/bqWbec058Gpi+yt8
+	iC5lNPT4yYjJZw5WZi2wMCSLlalQZtgQ156hhCmg8jcEqVi887j2+XwBkCl5ooUef3cezg/nFx40
+	f4kdbXwaKJFASg2iM98KHo3HNeJRM/u/rNgrvmbjoHWvTZAbd4Im4yzmB+b7EpSX+YGOqySD8HF4
+	uY70nayiLskLAbqfM6X9Vsmp3njksgbNO+WYBw==</xenc:CipherValue></xenc:CipherData></xenc:EncryptedKey></ds:KeyInfo><xenc:CipherData><xenc:CipherValue>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
+	7Ju8XPlIDZNSQOATi6VCbdJQYw==</xenc:CipherValue></xenc:CipherData></xenc:EncryptedData></saml:EncryptedAssertion></samlp:Response>
+
+我们看到samlp:StatusCode标签:
+
+	<samlp:StatusCode  xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" Value="urn:oasis:names:tc:SAML:2.0:status:Success">
+	</samlp:StatusCode>
+
+StatusCode标签的结果表明了我们的这次请求是成功的。下面是请求失败的情况下的错误代码：
+
+<img src="pic6.png" alt="pic6.png" width="800px" />
 
 
+### 4.2 对Response内容进行AES解密
+
+#### 4.2.1 获取AES密钥
+
+标签<xenc:CipherValue>中的内容就是AES的密钥：
+
+	<xenc:CipherValue>lPptVGLFfJk/BiJsS1/XPwtJGwuGc8M4c1Qq1RkBYbS4cwIIS1AljVC88qaSCKTqh7PFBF+LSyeW
+	tiXPhx8N01T9s1OYfxszXSSWB/u0P8KB4Vh9mpux+ZRxvlDm46Nn7FZ6lnR/bqWbec058Gpi+yt8
+	iC5lNPT4yYjJZw5WZi2wMCSLlalQZtgQ156hhCmg8jcEqVi887j2+XwBkCl5ooUef3cezg/nFx40
+	f4kdbXwaKJFASg2iM98KHo3HNeJRM/u/rNgrvmbjoHWvTZAbd4Im4yzmB+b7EpSX+YGOqySD8HF4
+	uY70nayiLskLAbqfM6X9Vsmp3njksgbNO+WYBw==</xenc:CipherValue>
+
+这个密钥也是经过base64编码的，我们需要对它进行base64的逆向编码。接下来，我们还需要对其进行RSA解密，我们使用Integration-Bundle-MTS-V2.1.zip中的mts_saml_sp.pem文件作为RSA的私钥，然后对AES的密钥进行解密，解密后的内容才是真正的AES密钥。
+
+	CipherValue标签值->base64解码->RSA解密
+
+#### 4.2.2 获取AES的IV值
+
+Response的xml里面指明了加密方式：
+
+	<xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/>
+
+Algorithm值说明了使用的是AES128-CBC加密方式，我们打开链接[http://www.w3.org/2001/04/xmlenc#aes128-cbc](http://www.w3.org/2001/04/xmlenc#aes128-cbc "http://www.w3.org/2001/04/xmlenc#aes128-cbc")
+
+然后，我们可以在章节 "5.2.2 AES" 看到如下的内容：
+
+	[AES] is used in the Cipher Block Chaining (CBC) mode with a 128 bit initialization vector (IV). The resulting cipher text is prefixed by the IV. If included in XML output, it is then base64 encoded. An example AES EncryptionMethod is as follows:
+
+  	<EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/>
+
+上面的内容指出AES的加密内容的前面的128bit就是initialization vector (IV)，128 bit就是16字母。
+
+我们在<xenc:CipherValue>中找到了AES的内容，截取前面的16个字符就是：
+	
+	eFNfWyzq4uqUjtZI
 
 
+#### 4.2.3 对主体内容进行AES解密
 
+<xenc:CipherValue>标签里面的内容就是AES的主体加密内容，也是经过了base64编码的，我们对其进行base64逆向编码，然后得到的是经过AES加密的一串乱码。接下来，我们使用前面获得的AES密钥和IV对AES的内容进行解密。
+
+PS:AES使用的padding方式是PKCS#5
+
+AES正确解密后的内容格式是xml:
+
+	<saml:Assertion xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="s208b1e913d1cbc624cc460731a07d0a20029f0fe2" IssueInstant="2018-01-23T11:19:44Z" Version="2.0">
+	<saml:Issuer>https://mts.realme.govt.nz/saml2</saml:Issuer><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+	<ds:SignedInfo>
+	<ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:CanonicalizationMethod>
+	<ds:SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"></ds:SignatureMethod>
+	<ds:Reference URI="#s208b1e913d1cbc624cc460731a07d0a20029f0fe2">
+	<ds:Transforms>
+	<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
+	<ds:Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"></ds:Transform>
+	</ds:Transforms>
+	<ds:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"></ds:DigestMethod>
+	<ds:DigestValue>VtVdWXO0ra7OOBUT6S5X0QyaNAk=</ds:DigestValue>
+	</ds:Reference>
+	</ds:SignedInfo>
+	<ds:SignatureValue>
+	emG7LErhFWVv6CqGvrY3IxeKT8MssQn8ZfrkuLIwZgnxSoCunq8sqnJDd5U2YIhp/jJwn2R/fA4L
+	foAeIlDwMX+/VRTcBoQAer5lBNPDqIWFqzza1R5+KxTfgQAe+tgvLAypk7M18u8vwAkLSaNtlE2Y
+	zu7CK5i6QVN+3V6Rt2LzjoQE8MYZwG9Qu75+xHeurZ9xzccfG64FmAB5QG+vRFXVUeYCywGuhhen
+	8AvFn+zOfSdxfe/FIXDCp4a4dajHFtuJTBhbX255skKX+XPebApydgJlulQ5VX/Xzr27Kpnbo4J0
+	WGDLOs/FyssV79a3LszIKyBqVjP4fy0GZ3gYCA==
+	</ds:SignatureValue>
+	<ds:KeyInfo>
+	<ds:X509Data>
+	<ds:X509Certificate>
+	MIIECTCCAvGgAwIBAgIEM4QPozANBgkqhkiG9w0BAQUFADCBtDELMAkGA1UEBhMCTloxEzARBgNV
+	BAgTCldlbGxpbmd0b24xEzARBgNVBAcTCldlbGxpbmd0b24xJzAlBgNVBAoTHkRlcGFydG1lbnQg
+	b2YgSW50ZXJuYWwgQWZmYWlyczEnMCUGA1UECxMeRGVwYXJ0bWVudCBvZiBJbnRlcm5hbCBBZmZh
+	aXJzMSkwJwYDVQQDEyBtdHMuc2lnbmluZy5sb2dvbi5yZWFsbWUuZ292dC5uejAeFw0xMzA5MTEy
+	MTU5NDVaFw0yMzA5MDkyMTU5NDVaMIG0MQswCQYDVQQGEwJOWjETMBEGA1UECBMKV2VsbGluZ3Rv
+	bjETMBEGA1UEBxMKV2VsbGluZ3RvbjEnMCUGA1UEChMeRGVwYXJ0bWVudCBvZiBJbnRlcm5hbCBB
+	ZmZhaXJzMScwJQYDVQQLEx5EZXBhcnRtZW50IG9mIEludGVybmFsIEFmZmFpcnMxKTAnBgNVBAMT
+	IG10cy5zaWduaW5nLmxvZ29uLnJlYWxtZS5nb3Z0Lm56MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A
+	MIIBCgKCAQEA5A+xjCmkrgqpSnkhCllJeisEfZn0VoyhLrPRSyZfjikufWhNoR9lDUP1wjqz/jIm
+	q7H46t8qHFkGbLO85ODkCsYiq+gSxh+TF1K3bGwtlz7m6QYFNURFid7AH8NaXEF6rylogHjSoJx/
+	1cuujIcb/qXCd0YXDICVqG74g0jkyk3V3gJuy5utTft6KrU/h9IuIudTP5xKwcaRtXlZoZkxxcOa
+	P6aBw8EPks3mfA7pknOtb1fvlYF4bXggNFYqxJCtBi5gLYQISRL8UWAW/EdN+mDIXn9BuQAsuS3s
+	1DTx/+dJy+9CZXNzK5i6bCj6TBnugasbkoOx8fdpYBmGlIZO7QIDAQABoyEwHzAdBgNVHQ4EFgQU
+	k53+2zIt62M8okGTDzgEiYfDR4swDQYJKoZIhvcNAQEFBQADggEBAFatYWgm1Tst/UbCDOXYziVp
+	nzCs8DPcswcETlQuju3Y4ys/spMgugrErqxyWcEB9nf9amtYFPkeuCwQ9PUxHCjSCCzmS9T6PhK+
+	iX83vL+IlMe3RsR9pdAYBI2lUcTMLHy2jGfgwTF+nGvH/48PImu7EAZj7pQgY3gk3J1F23BZ28aH
+	5N+RuDBY+17nk/yiqierT1J8/RUE2SGT9029sM0XSTQNYj3rB7K6foISbhqeiNlVDBmXUBWNtNxX
+	k6M088a1Op/ZucUC1haKpHtsszuF8wxC0PApX+yZWdiOPTewCWBhRjWMbr1gQJ7FV+LcpIHUqxaq
+	JPsnOwYNA0BljHk=
+	</ds:X509Certificate>
+	</ds:X509Data>
+	</ds:KeyInfo>
+	</ds:Signature><saml:Subject>
+	<saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" NameQualifier="https://mts.realme.govt.nz/saml2" SPNameQualifier="http://myrealme.test/mts2/sp">CloesTest</saml:NameID><saml:SubjectConfirmation Method="urn:oasis:names:tc:SAML:2.0:cm:bearer">
+	<saml:SubjectConfirmationData InResponseTo="a958a20e059c26d1cfb73163b1a6c4f9" NotOnOrAfter="2018-01-23T11:29:44Z" Recipient="http://52.198.228.221/post.php"></saml:SubjectConfirmationData></saml:SubjectConfirmation>
+	</saml:Subject><saml:Conditions NotBefore="2018-01-23T11:09:44Z" NotOnOrAfter="2018-01-23T11:29:44Z">
+	<saml:AudienceRestriction>
+	<saml:Audience>http://myrealme.test/mts2/sp</saml:Audience>
+	</saml:AudienceRestriction>
+	</saml:Conditions>
+	<saml:AuthnStatement AuthnInstant="2018-01-23T11:19:44Z" SessionIndex="s217b46f7dc993c8eca69f20759bead732962ddb01"><saml:AuthnContext><saml:AuthnContextClassRef>urn:nzl:govt:ict:stds:authn:deployment:GLS:SAML:2.0:ac:classes:ModStrength</saml:AuthnContextClassRef></saml:AuthnContext></saml:AuthnStatement></saml:Assertion>
+
+请注意下面的xml标签：
+
+	<saml:SubjectConfirmationData InResponseTo="a958a20e059c26d1cfb73163b1a6c4f9" NotOnOrAfter="2018-01-23T11:29:44Z" Recipient="http://52.198.228.221/post.php">
+
+里面的InResponseTo是和AuthnRequest中的ID是**对应**的，这个请求的AuthnRequest可以看前面的内容，这里再发一遍ID部分内容：
+
+	<samlp:AuthnRequest
+    xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion"
+    xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"
+    AssertionConsumerServiceIndex="0"
+    Destination="https://realme.govt.nz/sso/SSORedirect/metaAlias/logon-idp"
+    ID="a958a20e059c26d1cfb73163b1a6c4f9"
+    IssueInstant="2012-05-21T00:39:32Z"
+    ProviderName="Sample Service Provider"
+    Version="2.0">
+
+通过这个InResponseTo的返回值，我们可以和AuthnReauest请求一一对应起来。
+
+另外，Response还返回了User Fit的值：
+
+	<saml:NameID Format="urn:oasis:names:tc:SAML:2.0:nameid-format:persistent" NameQualifier="https://mts.realme.govt.nz/saml2" SPNameQualifier="http://myrealme.test/mts2/sp">CloesTest</saml:NameID>
+
+我们前面在Realme的测试地址中，使用"CloesTest"作为User Fit的值，在这个Response中系统返回了这个值。
+
+至此，对于Realme的AuthnRequest已经完成，我们可以根据自身的业务需要，根据AuthnRequest的返回结果来写入session等相关的用户凭证操作。
